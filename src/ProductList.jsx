@@ -263,11 +263,16 @@ function ProductList({ onHomeClick }) {
     const handleAddToCart = (product) => {
         dispatch(addItem(product)); 
 
-        setAddedToCart((prevState) => ({ 
-            ...prevState, 
-            [product.name]: true, 
-        }));
     };
+
+    useEffect(() => {
+        const flags = {};
+        cartItems.forEach((item) => {
+            flags[item.name] = true;   
+        });
+        setAddedToCart(flags);    
+        }, [cartItems]);
+
 
     const calculateTotalQuantity = () => {
         return cartItems && cartItems.length
@@ -319,11 +324,13 @@ function ProductList({ onHomeClick }) {
                         <div className="product-description">{plant.description}</div> 
                         <div className="product-cost">{plant.cost}</div> 
                         <button
-                            className="product-button"
+                            className={`product-button ${addedToCart[plant.name] ? 'added-to-cart' : ''}`}
                             onClick={() => handleAddToCart(plant)}
-                        >
-                            Add to Cart
+                            disabled={addedToCart[plant.name] ? true : false}   
+                            >
+                            {addedToCart[plant.name] ? 'Added to Cart' : 'Add to Cart'}
                         </button>
+
                         </div>
                     ))}
                     </div>
